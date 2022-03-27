@@ -1,12 +1,12 @@
-# hardhat-erc20
+# hardhat-nft-marketplace
 
-This is a basic erc20 dApp built with Hardhat and React and Redux.
+This is a basic NFK Marketplace dApp built with Hardhat and React and Redux.
 
 **How it works**
 
-In the backend, there is an erc-20 smart contract. The owner of the contract gets the initial balance when deploy and can send tokens in a transaction. Also, anyone can get information about the token: for example the name, symbol and total supply.
+In the backend, <complete></complete>
 
-In the frontend, the user can see three pages: home, network information and token information.
+In the frontend, <complete>the user can see three pages: home, network information and token information.</complete>
 
 ## Requirements
 
