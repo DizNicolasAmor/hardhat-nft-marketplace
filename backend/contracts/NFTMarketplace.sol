@@ -33,17 +33,15 @@ contract NFTMarketplace is ERC721URIStorage {
       bool sold
     );
 
-    constructor() ERC721("Metaverse Tokens", "METT") {
+    constructor() ERC721("My Awesome NFTs", "MY_NFTS") {
       owner = payable(msg.sender);
     }
 
-    /* Updates the listing price of the contract */
     function updateListingPrice(uint _listingPrice) public payable {
       require(owner == msg.sender, "Only marketplace owner can update listing price.");
       listingPrice = _listingPrice;
     }
 
-    /* Returns the listing price of the contract */
     function getListingPrice() public view returns (uint256) {
       return listingPrice;
     }
@@ -74,7 +72,9 @@ contract NFTMarketplace is ERC721URIStorage {
         false
       );
 
+      /* transfers ownership to this contract (the marketplace) */
       _transfer(msg.sender, address(this), tokenId);
+
       emit MarketItemCreated(
         tokenId,
         msg.sender,
@@ -114,7 +114,6 @@ contract NFTMarketplace is ERC721URIStorage {
       payable(seller).transfer(msg.value);
     }
 
-    /* Returns all unsold market items */
     function fetchMarketItems() public view returns (MarketItem[] memory) {
       uint itemCount = _tokenIds.current();
       uint unsoldItemCount = _tokenIds.current() - _itemsSold.current();
@@ -132,7 +131,6 @@ contract NFTMarketplace is ERC721URIStorage {
       return items;
     }
 
-    /* Returns only items that a user has purchased */
     function fetchMyNFTs() public view returns (MarketItem[] memory) {
       uint totalItemCount = _tokenIds.current();
       uint itemCount = 0;
@@ -156,7 +154,6 @@ contract NFTMarketplace is ERC721URIStorage {
       return items;
     }
 
-    /* Returns only items a user has listed */
     function fetchItemsListed() public view returns (MarketItem[] memory) {
       uint totalItemCount = _tokenIds.current();
       uint itemCount = 0;
