@@ -1,9 +1,10 @@
-import { Contract, ethers, providers } from 'ethers';
 import { useEffect, useState } from 'react';
-import MyToken from '../../artifacts/contracts/MyToken.sol/MyToken.json';
+import { Contract, ethers, providers } from 'ethers';
+import axios from 'axios';
+import NFTMarketplace from '../../artifacts/contracts/NFTMarketplace.sol/NFTMarketplace.json';
 import { CONTRACT_ADDRESSES, LOCALHOST_CHAIN_ID } from '../utils/constants';
 
-const useToken = (chainId: number) => {
+const useMarketplace = (chainId: number) => {
   const [contractAddress, setContractAddress] = useState<string>(
     CONTRACT_ADDRESSES[LOCALHOST_CHAIN_ID]
   );
@@ -30,7 +31,7 @@ const useToken = (chainId: number) => {
       const signer = provider.getSigner();
       const instantiatedContract = new ethers.Contract(
         contractAddress,
-        MyToken.abi,
+        NFTMarketplace.abi,
         signer
       );
       setContractInstance(instantiatedContract);
@@ -42,34 +43,37 @@ const useToken = (chainId: number) => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const getContractInformation = async (): Promise<any | undefined> => {
+  const fetchMarketItems = async () => {
     try {
       const contract = await getContract();
-      const accounts = await window.ethereum.request({
-        method: 'eth_requestAccounts',
-      });
-      const balance = await contract.balanceOf(accounts[0]);
-      const name = await contract.name();
-      const symbol = await contract.symbol();
+      const items = await contract.fetchMarketItems();
+      const parsedItems = await Promise.all(
+        items.map(async (i) => {
+          const tokenUri = await contract.tokenURI(i.tokenId);
+          const meta = await axios.get(tokenUri);
+          const { image, name, description } = meta.data;
+          const price = ethers.utils.formatUnits(i.price.toString(), 'ether');
+          const tokenId = i.tokenId.toNumber();
 
-      return { balance, name, symbol };
+          return {
+            price,
+            tokenId,
+            seller: i.seller,
+            owner: i.owner,
+            image,
+            name,
+            description,
+          };
+        })
+      );
+      return parsedItems;
     } catch (error) {
       console.log(error);
       throw error;
     }
   };
 
-  async function transferToken(receiverAddress: string, amountToSend: string) {
-    if (!receiverAddress || !amountToSend) return;
-
-    const contract = await getContract();
-    const parsedAmount = ethers.utils.parseUnits(amountToSend);
-    const transaction = await contract.transfer(receiverAddress, parsedAmount);
-    await transaction.wait();
-  }
-
-  return [getContractInformation, transferToken] as const;
+  return [fetchMarketItems] as const;
 };
 
-export default useToken;
+export default useMarketplace;

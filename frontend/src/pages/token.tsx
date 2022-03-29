@@ -7,14 +7,14 @@ import CommonSpinner from '../components/CommonSpinner';
 import { getNetwork } from '../redux/slices/networkSlice';
 import { getToken, setToken, setIsLoading } from '../redux/slices/tokenSlice';
 import { renderSectionItem } from '../utils/utilFunctions';
-import useToken from '../hooks/useToken';
+import useMarketplace from '../hooks/useMarketplace';
 
 const TokenSection: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [receiverAddress, setReceiverAddressValue] = useState<string>('');
   const [amountToSend, setAmountToSend] = useState<string>('');
   const { chainId } = useSelector(getNetwork);
-  const [getContractInformation, transferToken] = useToken(chainId);
+  const [getContractInformation, transferToken] = useMarketplace(chainId);
   const { isLoading, name, symbol, userBalance } = useSelector(getToken);
   const dispatch = useDispatch();
   const refReceiverAddressValue = useRef<HTMLInputElement>(null);
