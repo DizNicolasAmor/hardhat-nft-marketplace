@@ -1,59 +1,35 @@
-import React, { useRef, useState } from 'react';
-import { utils } from 'ethers';
-import { Button, Form } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Error from '../components/Error';
 import CommonSpinner from '../components/CommonSpinner';
 import { getNetwork } from '../redux/slices/networkSlice';
-import { getToken, setToken, setIsLoading } from '../redux/slices/tokenSlice';
-import { renderSectionItem } from '../utils/utilFunctions';
+import {
+  getMarketplace,
+  setMarketplace,
+  setIsLoading,
+} from '../redux/slices/marketplaceSlice';
 import useMarketplace from '../hooks/useMarketplace';
 
 const TokenSection: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
-  const [receiverAddress, setReceiverAddressValue] = useState<string>('');
-  const [amountToSend, setAmountToSend] = useState<string>('');
   const { chainId } = useSelector(getNetwork);
-  const [getContractInformation, transferToken] = useMarketplace(chainId);
-  const { isLoading, name, symbol, userBalance } = useSelector(getToken);
+  const [fetchMarketItems] = useMarketplace(chainId);
+  const { isLoading, items } = useSelector(getMarketplace);
   const dispatch = useDispatch();
-  const refReceiverAddressValue = useRef<HTMLInputElement>(null);
-  const refAmountToSend = useRef<HTMLInputElement>(null);
 
-  const handleReceiverAddress = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    if (event?.target?.value) {
-      setReceiverAddressValue(event?.target?.value);
-    }
-  };
-  const handleAmountToSend = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    if (event?.target?.value) {
-      setAmountToSend(event?.target?.value);
-    }
-  };
-  const handleSendToken = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ): void => {
-    event.preventDefault();
-    sendToken(receiverAddress, amountToSend);
-  };
-
-  const handleGetInfo = async () => {
+  const handleGetMarketItems = async () => {
     setErrorMessage('');
     dispatch(setIsLoading(true));
 
     try {
-      const { balance, name, symbol } = await getContractInformation();
+      const marketItems = await fetchMarketItems();
+      console.log({ marketItems });
 
       dispatch(
-        setToken({
+        setMarketplace({
           isLoading: false,
-          name,
-          symbol,
-          userBalance: utils.formatEther(balance),
+          items: marketItems,
         })
       );
     } catch (reason) {
@@ -63,56 +39,22 @@ const TokenSection: React.FC = () => {
     dispatch(setIsLoading(false));
   };
 
-  const sendToken = async (receiverAddress: string, amountToSend: string) => {
-    setErrorMessage('');
-    dispatch(setIsLoading(true));
-
-    try {
-      await transferToken(receiverAddress, amountToSend);
-    } catch (reason) {
-      console.error(reason);
-      setErrorMessage('Error when sending tokens');
-    }
-    dispatch(setIsLoading(false));
-  };
-
   const renderContent = () => (
     <>
       <div className="m-3">
-        <Button className="m-3" variant="secondary" onClick={handleGetInfo}>
-          Get token info
-        </Button>
-        {renderSectionItem('Token name', name)}
-        {renderSectionItem('Token balance', `${userBalance} ${symbol}`)}
-      </div>
-      <Form className="m-auto" style={{ maxWidth: '45rem' }}>
-        <Form.Group className="mb-3" controlId="receiver-address">
-          <Form.Label>Receiver address</Form.Label>
-          <Form.Control
-            onChange={handleReceiverAddress}
-            placeholder=""
-            ref={refReceiverAddressValue}
-            type="text"
-          />
-        </Form.Group>
-        <Form.Group className="mb-3" controlId="amount-to-send">
-          <Form.Label>Amount to send</Form.Label>
-          <Form.Control
-            onChange={handleAmountToSend}
-            placeholder=""
-            ref={refAmountToSend}
-            type="number"
-          />
-        </Form.Group>
         <Button
           className="m-3"
-          variant="primary"
-          type="submit"
-          onClick={handleSendToken}
+          variant="secondary"
+          onClick={handleGetMarketItems}
         >
-          Send token
+          Get market items
         </Button>
-      </Form>
+      </div>
+      {items.length ? (
+        <div>Complete with items</div>
+      ) : (
+        <div>There are no items in the marketplace so far</div>
+      )}
       <Error errorMessage={errorMessage} />
     </>
   );
@@ -126,7 +68,7 @@ const TokenSection: React.FC = () => {
 
   return (
     <section aria-labelledby="token-section" className="text-center">
-      <h1 id="token-section">Welcome to the Token section</h1>
+      <h1 id="token-section">Welcome to the NFT Marketplace</h1>
       {chainId ? renderSpinnerOrContent() : renderDefaultMessage()}
     </section>
   );

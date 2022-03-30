@@ -2,20 +2,16 @@ import { createSlice, Draft, PayloadAction } from '@reduxjs/toolkit';
 
 const initialState = {
   isLoading: false,
-  name: '',
-  symbol: '',
-  userBalance: '',
+  items: [],
 };
 
-export const tokenSlice = createSlice({
+export const marketplaceSlice = createSlice({
   name: 'token',
   initialState,
   reducers: {
-    resetToken: (state: Draft<typeof initialState>) => {
+    resetMarketplace: (state: Draft<typeof initialState>) => {
       state.isLoading = false;
-      state.name = '';
-      state.symbol = '';
-      state.userBalance = '';
+      state.items = [];
     },
     setIsLoading: (
       state: Draft<typeof initialState>,
@@ -24,23 +20,22 @@ export const tokenSlice = createSlice({
       ...state,
       isLoading: action.payload,
     }),
-    setToken: (
+    setMarketplace: (
       state: Draft<typeof initialState>,
       action: PayloadAction<typeof initialState>
     ) => {
       state.isLoading = action.payload.isLoading;
-      state.name = action.payload.name;
-      state.symbol = action.payload.symbol;
-      state.userBalance = action.payload.userBalance;
+      state.items = [...action.payload.items];
     },
   },
 });
 
 // Selectors
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const getToken = (state: any) => state.token;
+export const getMarketplace = (state: any) => state.token;
 
 // Reducers and actions
-export const { resetToken, setIsLoading, setToken } = tokenSlice.actions;
+export const { resetMarketplace, setIsLoading, setMarketplace } =
+  marketplaceSlice.actions;
 
-export default tokenSlice.reducer;
+export default marketplaceSlice.reducer;

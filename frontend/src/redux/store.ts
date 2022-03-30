@@ -2,14 +2,14 @@ import { configureStore } from '@reduxjs/toolkit';
 
 import networkReducer from './slices/networkSlice';
 import toastReducer from './slices/toastSlice';
-import tokenReducer from './slices/tokenSlice';
+import marketplaceReducer from './slices/marketplaceSlice';
 import userReducer from './slices/userSlice';
 
 export default configureStore({
   reducer: {
     network: networkReducer,
     toast: toastReducer,
-    token: tokenReducer,
+    token: marketplaceReducer,
     user: userReducer,
   },
 });
