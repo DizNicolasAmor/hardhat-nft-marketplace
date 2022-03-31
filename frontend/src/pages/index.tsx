@@ -1,22 +1,77 @@
-import React from 'react';
-import { Container } from 'react-bootstrap';
+import React, { useState } from 'react';
+import { Button, Container } from 'react-bootstrap';
+import { useDispatch, useSelector } from 'react-redux';
+import Error from '../components/Error';
+import CommonSpinner from '../components/CommonSpinner';
+import { getNetwork } from '../redux/slices/networkSlice';
+import {
+  getMarketplace,
+  setMarketplace,
+  setIsLoading,
+} from '../redux/slices/marketplaceSlice';
+import useMarketplace from '../hooks/useMarketplace';
 
 const Home = () => {
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const { chainId } = useSelector(getNetwork);
+  const [fetchMarketItems] = useMarketplace(chainId);
+  const { isLoading, items } = useSelector(getMarketplace);
+  const dispatch = useDispatch();
+
+  const handleGetMarketItems = async () => {
+    setErrorMessage('');
+    dispatch(setIsLoading(true));
+
+    try {
+      const marketItems = await fetchMarketItems();
+      console.log({ marketItems });
+
+      dispatch(
+        setMarketplace({
+          isLoading: false,
+          items: marketItems,
+        })
+      );
+    } catch (reason) {
+      console.error(reason);
+      setErrorMessage('Error when fetching contract');
+    }
+    dispatch(setIsLoading(false));
+  };
+
+  const renderContent = () => (
+    <>
+      <div className="m-3">
+        <Button
+          className="m-3"
+          variant="secondary"
+          onClick={handleGetMarketItems}
+        >
+          Get market items
+        </Button>
+      </div>
+      {items.length ? (
+        <div>Complete with items</div>
+      ) : (
+        <div>There are no items in the marketplace so far</div>
+      )}
+      <Error errorMessage={errorMessage} />
+    </>
+  );
+
+  const renderDefaultMessage = () => (
+    <p className="m-3">You have to connect your wallet to see this section.</p>
+  );
+
+  const renderSpinnerOrContent = () =>
+    isLoading ? <CommonSpinner /> : renderContent();
+
   return (
     <Container>
-      <div className="text-center">
-        <h1 className="m-3">ERC20 dApp</h1>
-        <p>
-          In the backend, there is an erc-20 smart contract. The owner of the
-          contract gets the initial balance when deploy and can send tokens in a
-          transaction. Also, anyone can get information about the token: for
-          example the name, symbol and total supply.
-        </p>
-        <p>
-          In the frontend, the user can see three pages: home, network
-          information and token information.
-        </p>
-      </div>
+      <section aria-labelledby="marketplace-section" className="text-center">
+        <h1 id="marketplace-section">Welcome to the NFT Marketplace</h1>
+        {chainId ? renderSpinnerOrContent() : renderDefaultMessage()}
+      </section>
     </Container>
   );
 };
