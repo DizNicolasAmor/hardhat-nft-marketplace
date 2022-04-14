@@ -9,7 +9,7 @@ export default configureStore({
   reducer: {
     network: networkReducer,
     toast: toastReducer,
-    token: marketplaceReducer,
+    marketplace: marketplaceReducer,
     user: userReducer,
   },
 });

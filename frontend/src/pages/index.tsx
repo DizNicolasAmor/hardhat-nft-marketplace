@@ -10,6 +10,8 @@ import {
   setIsLoading,
 } from '../redux/slices/marketplaceSlice';
 import useMarketplace from '../hooks/useMarketplace';
+import ItemsList from '../components/ItemsList';
+import { IItem } from '../components/Item';
 
 const Home = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
@@ -23,7 +25,7 @@ const Home = () => {
     dispatch(setIsLoading(true));
 
     try {
-      const marketItems = await fetchMarketItems();
+      const marketItems: IItem[] = await fetchMarketItems();
       console.log({ marketItems });
 
       dispatch(
@@ -51,7 +53,7 @@ const Home = () => {
         </Button>
       </div>
       {items.length ? (
-        <div>Complete with items</div>
+        <ItemsList items={items} />
       ) : (
         <div>There are no items in the marketplace so far</div>
       )}
