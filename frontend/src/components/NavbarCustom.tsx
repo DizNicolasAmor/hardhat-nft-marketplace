@@ -89,7 +89,7 @@ const NavbarCustom: FC = () => {
               navbarScroll
             >
               <Nav.Link href="network">Network info</Nav.Link>
-              <Nav.Link href="token">Token info</Nav.Link>
+              <Nav.Link href="profile">Profile</Nav.Link>
             </Nav>
             <Button
               onClick={handleConnect}
