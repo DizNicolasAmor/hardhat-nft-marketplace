@@ -43,12 +43,13 @@ const useMarketplace = (chainId: number) => {
     }
   };
 
-  const fetchMarketItems = async () => {
+  const fetchContractHOF = async (contractFetchFunctionName: string) => {
     try {
       const contract = await getContract();
-      const items = await contract.fetchMarketItems();
+      const items = await contract[contractFetchFunctionName]();
       const parsedItems = await Promise.all(
-        items.map(async (i) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        items.map(async (i: any) => {
           const tokenUri = await contract.tokenURI(i.tokenId);
           const meta = await axios.get(tokenUri);
           const { image, name, description } = meta.data;
@@ -73,7 +74,15 @@ const useMarketplace = (chainId: number) => {
     }
   };
 
-  return [fetchMarketItems] as const;
+  const fetchMarketItems = async () =>
+    await fetchContractHOF('fetchMarketItems');
+
+  const fetchMyNFTs = async () => await fetchContractHOF('fetchMyNFTs');
+
+  const fetchItemsListed = async () =>
+    await fetchContractHOF('fetchItemsListed');
+
+  return [fetchMarketItems, fetchMyNFTs, fetchItemsListed] as const;
 };
 
 export default useMarketplace;

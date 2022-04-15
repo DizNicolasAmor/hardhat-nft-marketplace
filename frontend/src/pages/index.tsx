@@ -26,7 +26,6 @@ const Home = () => {
 
     try {
       const marketItems: IItem[] = await fetchMarketItems();
-      console.log({ marketItems });
 
       dispatch(
         setMarketplace({
