@@ -82,7 +82,28 @@ const useMarketplace = (chainId: number) => {
   const fetchItemsListed = async () =>
     await fetchContractHOF('fetchItemsListed');
 
-  return [fetchMarketItems, fetchMyNFTs, fetchItemsListed] as const;
+  const createToken = async (tokenURI: string, price: string) => {
+    try {
+      const contract = await getContract();
+      const listingPrice = await contract.getListingPrice();
+      const value = listingPrice.toString();
+      // const transaction = await contract.createToken(tokenURI, price, { value });
+      // await transaction.wait();
+      const tokenId = await contract.createToken(tokenURI, price, { value });
+
+      return tokenId;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
+  return [
+    createToken,
+    fetchMarketItems,
+    fetchMyNFTs,
+    fetchItemsListed,
+  ] as const;
 };
 
 export default useMarketplace;
