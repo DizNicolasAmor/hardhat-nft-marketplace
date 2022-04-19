@@ -98,12 +98,12 @@ const useMarketplace = (chainId: number) => {
     }
   };
 
-  return [
+  return {
     createToken,
     fetchMarketItems,
     fetchMyNFTs,
     fetchItemsListed,
-  ] as const;
+  };
 };
 
 export default useMarketplace;

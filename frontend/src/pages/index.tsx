@@ -16,7 +16,7 @@ import { IItem } from '../components/Item';
 const Home = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const { chainId } = useSelector(getNetwork);
-  const [fetchMarketItems] = useMarketplace(chainId);
+  const { fetchMarketItems } = useMarketplace(chainId);
   const { isLoading, items } = useSelector(getMarketplace);
   const dispatch = useDispatch();
 

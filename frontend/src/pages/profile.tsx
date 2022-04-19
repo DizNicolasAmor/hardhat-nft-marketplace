@@ -16,7 +16,7 @@ import { IItem } from '../components/Item';
 export default function MyAssets() {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const { chainId } = useSelector(getNetwork);
-  const [fetchMyNFTs] = useMarketplace(chainId);
+  const { fetchMyNFTs } = useMarketplace(chainId);
   const { isLoading, items } = useSelector(getMarketplace);
   const dispatch = useDispatch();
 
