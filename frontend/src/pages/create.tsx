@@ -1,73 +1,102 @@
 import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { Container } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
+import { Button, Container, Form, Image } from 'react-bootstrap';
 import Error from '../components/Error';
 import CommonSpinner from '../components/CommonSpinner';
 import { getNetwork } from '../redux/slices/networkSlice';
 import useMarketplace from '../hooks/useMarketplace';
-
 import { create as ipfsHttpClient } from 'ipfs-http-client';
-import { useRouter } from 'next/router';
-import Web3Modal from 'web3modal';
+import { inputsConfig, IInputConfig } from '../utils/createNFT';
 
-// const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
-
-const CreateItem = () => {
+const CreateNFT = () => {
+  const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { chainId } = useSelector(getNetwork);
-  const [createNFT] = useMarketplace(chainId);
-
-  // const [fileUrl, setFileUrl] = useState('');
-  // const [formInput, updateFormInput] = useState({
-  //   price: '',
-  //   name: '',
-  //   description: '',
-  // });
-  // const router = useRouter();
-
-  // async function onChange(e) {
-  //   const file = e.target.files[0];
-  //   try {
-  //     const added = await client.add(file, {
-  //       progress: (prog) => console.log(`received: ${prog}`),
-  //     });
-  //     const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-  //     setFileUrl(url);
-  //   } catch (error) {
-  //     console.log('Error uploading file: ', error);
-  //   }
-  // }
+  const { createToken } = useMarketplace(chainId);
+  const [form, setForm] = useState({
+    description: '',
+    name: '',
+    price: '',
+  });
+  const [imageURL, setImageURL] = useState<string>('');
+  const handleUpdateForm = (
+    event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    key: string
+  ): void => {
+    if (key === 'file') {
+      console.log('handle upload file');
+    } else if (event?.target?.value) {
+      setForm({
+        ...form,
+        [key]: event.target.value,
+      });
+    }
+  };
 
   async function uploadToIPFS() {
-    const { name, description, price } = formInput;
-    if (!name || !description || !price || !fileUrl) return;
-    /* first, upload to IPFS */
-    const data = JSON.stringify({
-      name,
-      description,
-      image: fileUrl,
-    });
+    console.log('inside uploadToIPFS');
+    // const { name, description, price } = formInput;
+    // if (!name || !description || !price || !imageURL) return;
+    // /* first, upload to IPFS */
+    // const data = JSON.stringify({
+    //   name,
+    //   description,
+    //   image: imageURL,
+    // });
+    // try {
+    //   const added = await client.add(data);
+    //   const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+    //   /* after file is uploaded to IPFS, return the URL to use it in the transaction */
+    //   return url;
+    // } catch (error) {
+    //   console.log('Error uploading file: ', error);
+    // }
+  }
+
+  const handleCreateNFT = async () => {
     try {
-      const added = await client.add(data);
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-      /* after file is uploaded to IPFS, return the URL to use it in the transaction */
-      return url;
-    } catch (error) {
-      console.log('Error uploading file: ', error);
+      setIsLoading(true);
+      const url = await uploadToIPFS();
+      const { price } = form;
+      const tokenId = await createToken(url, price);
+      setIsLoading(false);
+      return tokenId;
+    } catch (reason) {
+      console.error(reason);
+      setIsLoading(false);
+      setErrorMessage('Error when creating your NFT');
     }
-  }
-
-  async function listNFTForSale() {
-    const url = await uploadToIPFS();
-
-    await createNFT();
-
-    router.push('/');
-  }
+  };
 
   const renderContent = () => (
     <>
       <div>This is the create section</div>
+      <div className="m-auto" style={{ maxWidth: '45rem' }}>
+        <Form>
+          {inputsConfig.map((input: IInputConfig) => {
+            <Form.Group className="mb-3" controlId={input.controlId}>
+              <Form.Label>{input.text}</Form.Label>
+              <Form.Control
+                as={input.as}
+                onChange={(ev) => handleUpdateForm(ev, input.key)}
+                placeholder=""
+                type={input.type}
+              />
+            </Form.Group>;
+          })}
+          {Boolean(imageURL) && <Image src={imageURL} />}
+          <Button
+            className="m-3"
+            variant="primary"
+            type="submit"
+            onClick={handleCreateNFT}
+          >
+            Create NFT
+          </Button>
+        </Form>
+      </div>
+
       <Error errorMessage={errorMessage} />
     </>
   );
@@ -82,47 +111,11 @@ const CreateItem = () => {
   return (
     <Container>
       <section aria-labelledby="create-section" className="text-center">
-        <h1 id="create-section">Your NFTs collection</h1>
+        <h1 id="create-section">Create your NFT</h1>
         {chainId ? renderSpinnerOrContent() : renderDefaultMessage()}
       </section>
     </Container>
   );
-
-  // return (
-  //   <div className="flex justify-center">
-  //     <div className="w-1/2 flex flex-col pb-12">
-  //       <input
-  //         placeholder="Asset Name"
-  //         className="mt-8 border rounded p-4"
-  //         onChange={(e) =>
-  //           updateFormInput({ ...formInput, name: e.target.value })
-  //         }
-  //       />
-  //       <textarea
-  //         placeholder="Asset Description"
-  //         className="mt-2 border rounded p-4"
-  //         onChange={(e) =>
-  //           updateFormInput({ ...formInput, description: e.target.value })
-  //         }
-  //       />
-  //       <input
-  //         placeholder="Asset Price in Eth"
-  //         className="mt-2 border rounded p-4"
-  //         onChange={(e) =>
-  //           updateFormInput({ ...formInput, price: e.target.value })
-  //         }
-  //       />
-  //       <input type="file" name="Asset" className="my-4" onChange={onChange} />
-  //       {fileUrl && <img className="rounded mt-4" width="350" src={fileUrl} />}
-  //       <button
-  //         onClick={listNFTForSale}
-  //         className="font-bold mt-4 bg-pink-500 text-white rounded p-4 shadow-lg"
-  //       >
-  //         Create NFT
-  //       </button>
-  //     </div>
-  //   </div>
-  // );
 };
 
-export default CreateItem;
+export default CreateNFT;
