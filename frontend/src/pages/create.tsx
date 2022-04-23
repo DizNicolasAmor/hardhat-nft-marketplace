@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { create as ipfsHttpClient } from 'ipfs-http-client';
 import { Button, Container, Form, Image } from 'react-bootstrap';
-import Error from '../components/Error';
 import CommonSpinner from '../components/CommonSpinner';
+import Error from '../components/Error';
 import { getNetwork } from '../redux/slices/networkSlice';
 import useMarketplace from '../hooks/useMarketplace';
-import { create as ipfsHttpClient } from 'ipfs-http-client';
 import { inputsConfig, IInputConfig } from '../utils/createNFT';
 
 const CreateNFT = () => {
-  const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
+  const client = ipfsHttpClient({
+    host: 'ipfs.infura.io',
+    port: 5001,
+    protocol: 'https',
+    apiPath: '/api/v0',
+  });
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { chainId } = useSelector(getNetwork);
@@ -20,6 +25,7 @@ const CreateNFT = () => {
     price: '',
   });
   const [imageURL, setImageURL] = useState<string>('');
+
   const handleUpdateForm = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     key: string
@@ -34,31 +40,33 @@ const CreateNFT = () => {
     }
   };
 
-  async function uploadToIPFS() {
-    console.log('inside uploadToIPFS');
-    // const { name, description, price } = formInput;
-    // if (!name || !description || !price || !imageURL) return;
-    // /* first, upload to IPFS */
-    // const data = JSON.stringify({
-    //   name,
-    //   description,
-    //   image: imageURL,
-    // });
-    // try {
-    //   const added = await client.add(data);
-    //   const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-    //   /* after file is uploaded to IPFS, return the URL to use it in the transaction */
-    //   return url;
-    // } catch (error) {
-    //   console.log('Error uploading file: ', error);
-    // }
+  async function uploadToIPFS(data: string) {
+    const added = await client.add(data);
+    const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+
+    return url;
   }
 
-  const handleCreateNFT = async () => {
+  const handleCreateNFT = async (event: Event) => {
+    event.preventDefault();
+    setErrorMessage('');
+    setIsLoading(true);
+
+    const { name, description, price } = form;
+    const data = JSON.stringify({
+      name,
+      description,
+      image: imageURL,
+    });
+
+    if (!name || !description || !price || !imageURL) {
+      setErrorMessage('Invalid form data');
+      setIsLoading(false);
+      return;
+    }
+
     try {
-      setIsLoading(true);
-      const url = await uploadToIPFS();
-      const { price } = form;
+      const url = await uploadToIPFS(data);
       const tokenId = await createToken(url, price);
       setIsLoading(false);
       return tokenId;
@@ -74,8 +82,12 @@ const CreateNFT = () => {
       <div>This is the create section</div>
       <div className="m-auto" style={{ maxWidth: '45rem' }}>
         <Form>
-          {inputsConfig.map((input: IInputConfig) => {
-            <Form.Group className="mb-3" controlId={input.controlId}>
+          {inputsConfig.map((input: IInputConfig) => (
+            <Form.Group
+              className="mb-3"
+              controlId={input.controlId}
+              key={input.controlId}
+            >
               <Form.Label>{input.text}</Form.Label>
               <Form.Control
                 as={input.as}
@@ -83,8 +95,8 @@ const CreateNFT = () => {
                 placeholder=""
                 type={input.type}
               />
-            </Form.Group>;
-          })}
+            </Form.Group>
+          ))}
           {Boolean(imageURL) && <Image src={imageURL} />}
           <Button
             className="m-3"
