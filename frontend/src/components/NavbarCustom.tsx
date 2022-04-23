@@ -88,7 +88,7 @@ const NavbarCustom: FC = () => {
               style={{ maxHeight: '100px' }}
               navbarScroll
             >
-              <Nav.Link href="network">Network info</Nav.Link>
+              <Nav.Link href="create">Create NFT</Nav.Link>
               <Nav.Link href="profile">Profile</Nav.Link>
             </Nav>
             <Button
