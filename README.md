@@ -6,7 +6,11 @@ This is a basic NFK Marketplace dApp built with Hardhat and React and Redux.
 
 In the backend, <complete></complete>
 
-In the frontend, <complete>the user can see three pages: home, network information and token information.</complete>
+In the frontend:
+
+- home page: the user is able to see the list of NFT items of the Marketplace and buy an item.
+- profile page: the user is able to see their own items.
+- create page: the user is able to create an NFT.
 
 ## Requirements
 
