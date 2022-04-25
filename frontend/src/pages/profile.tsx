@@ -13,7 +13,7 @@ import useMarketplace from '../hooks/useMarketplace';
 import ItemsList from '../components/ItemsList';
 import { IItem } from '../components/Item';
 
-export default function MyAssets() {
+const Profile = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const { chainId } = useSelector(getNetwork);
   const { fetchMyNFTs } = useMarketplace(chainId);
@@ -70,4 +70,6 @@ export default function MyAssets() {
       </section>
     </Container>
   );
-}
+};
+
+export default Profile;
