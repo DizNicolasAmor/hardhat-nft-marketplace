@@ -41,3 +41,6 @@ const mapChainIdToNetworkSymbol: { [id: number]: string } = {
 
 export const getNetworkSymbol = (chainId: number) =>
   mapChainIdToNetworkSymbol[chainId] || 'unknown';
+
+export const imageExampleURL =
+  'https://bafybeih2smrjpsymt5t7sx6pj27fvn3jhfjopye3wjjztrwkqq37nfixfy.ipfs.infura-ipfs.io/';
