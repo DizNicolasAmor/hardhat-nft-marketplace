@@ -7,6 +7,7 @@ import Error from '../components/Error';
 import { getNetwork } from '../redux/slices/networkSlice';
 import useMarketplace from '../hooks/useMarketplace';
 import { inputsConfig, IInputConfig } from '../utils/createNFT';
+import { imageExampleURL } from '../utils/constants';
 
 const CreateNFT = () => {
   const client = ipfsHttpClient({
@@ -24,14 +25,30 @@ const CreateNFT = () => {
     name: '',
     price: '',
   });
-  const [imageURL, setImageURL] = useState<string>('');
+  // const [imageURL, setImageURL] = useState<string>('');
+  const [imageURL, setImageURL] = useState<string>(imageExampleURL);
+
+  const handleUpdateFile = async (file: File) => {
+    try {
+      const added = await client.add(file, {
+        progress: (prog) => console.log(`received: ${prog}`),
+      });
+      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      setImageURL(url);
+    } catch (error) {
+      console.error('Error uploading file: ', error);
+    }
+  };
 
   const handleUpdateForm = (
     event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
     key: string
   ): void => {
     if (key === 'file') {
-      console.log('handle upload file');
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        handleUpdateFile(file);
+      }
     } else if (event?.target?.value) {
       setForm({
         ...form,
@@ -43,12 +60,11 @@ const CreateNFT = () => {
   async function uploadToIPFS(data: string) {
     const added = await client.add(data);
     const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-
+    console.log({ url });
     return url;
   }
 
-  const handleCreateNFT = async (event: Event) => {
-    event.preventDefault();
+  const internalCreateNFT = async () => {
     setErrorMessage('');
     setIsLoading(true);
 
@@ -77,6 +93,13 @@ const CreateNFT = () => {
     }
   };
 
+  const handleCreateNFT = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    event.preventDefault();
+    internalCreateNFT();
+  };
+
   const renderContent = () => (
     <>
       <div>This is the create section</div>
@@ -97,7 +120,18 @@ const CreateNFT = () => {
               />
             </Form.Group>
           ))}
-          {Boolean(imageURL) && <Image src={imageURL} />}
+          {Boolean(imageURL) && (
+            <div
+              className="m-auto"
+              style={{ width: '15rem', height: '15rem', overflow: 'hidden' }}
+            >
+              <Image
+                alt="Your asset image"
+                src={imageURL}
+                style={{ width: 'auto', height: '100%' }}
+              />
+            </div>
+          )}
           <Button
             className="m-3"
             variant="primary"
