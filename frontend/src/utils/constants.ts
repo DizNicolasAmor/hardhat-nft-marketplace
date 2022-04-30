@@ -44,3 +44,6 @@ export const getNetworkSymbol = (chainId: number) =>
 
 export const imageExampleURL =
   'https://bafybeih2smrjpsymt5t7sx6pj27fvn3jhfjopye3wjjztrwkqq37nfixfy.ipfs.infura-ipfs.io/';
+
+export const exampleURI =
+  'https://bafybeiaw4vcge6hlgydocxqmlkfi5ihl6yt6jxhwa65zh5oednzrniq4t4.ipfs.infura-ipfs.io/';
