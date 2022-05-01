@@ -7,7 +7,7 @@ import Error from '../components/Error';
 import { getNetwork } from '../redux/slices/networkSlice';
 import useMarketplace from '../hooks/useMarketplace';
 import { inputsConfig, IInputConfig } from '../utils/createNFT';
-import { imageExampleURL } from '../utils/constants';
+import { createHardcodedToken } from '../utils/constants';
 
 const CreateNFT = () => {
   const client = ipfsHttpClient({
@@ -25,8 +25,7 @@ const CreateNFT = () => {
     name: '',
     price: '',
   });
-  // const [imageURL, setImageURL] = useState<string>('');
-  const [imageURL, setImageURL] = useState<string>(imageExampleURL);
+  const [imageURL, setImageURL] = useState<string>('');
 
   const handleUpdateFile = async (file: File) => {
     try {
@@ -61,6 +60,7 @@ const CreateNFT = () => {
     const added = await client.add(data);
     const url = `https://ipfs.infura.io/ipfs/${added.path}`;
     console.log({ url });
+
     return url;
   }
 
@@ -98,6 +98,7 @@ const CreateNFT = () => {
   ) => {
     event.preventDefault();
     internalCreateNFT();
+    // createHardcodedToken(createToken);
   };
 
   const renderContent = () => (
