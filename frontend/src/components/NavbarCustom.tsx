@@ -2,9 +2,10 @@ import React, { FC, useEffect, useState } from 'react';
 import { providers, utils } from 'ethers';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Container, Nav, Navbar } from 'react-bootstrap';
+import _truncate from 'lodash.truncate';
 import ToastCustom from './ToastCustom';
 import { getToast, setToast, resetToast } from '../redux/slices/toastSlice';
-import { resetUser, setUser } from '../redux/slices/userSlice';
+import { getUser, resetUser, setUser } from '../redux/slices/userSlice';
 import useNetwork from '../hooks/useNetwork';
 import { resetNetwork, setNetwork } from '../redux/slices/networkSlice';
 import { getNetworkName, getNetworkSymbol } from '../utils/constants';
@@ -13,6 +14,7 @@ const NavbarCustom: FC = () => {
   const [isToastOpen, setIsToastOpen] = useState(false);
   const [{ web3 }, handleNetwork] = useNetwork();
   const { message: toastMessage, type: toastType } = useSelector(getToast);
+  const { address } = useSelector(getUser);
   const dispatch = useDispatch();
   const resetFields = () => {
     dispatch(resetUser());
@@ -76,6 +78,10 @@ const NavbarCustom: FC = () => {
     });
   };
 
+  const truncatedAddress = `${_truncate(address, {
+    length: 7,
+  })}${address.substring(address.length, address.length - 4)}`;
+
   return (
     <>
       <Navbar bg="light" expand="lg">
@@ -91,6 +97,7 @@ const NavbarCustom: FC = () => {
               <Nav.Link href="create">Create NFT</Nav.Link>
               <Nav.Link href="profile">Profile</Nav.Link>
             </Nav>
+            <div className="m-3">{truncatedAddress}</div>
             <Button
               onClick={handleConnect}
               variant={web3 ? 'outline-primary' : 'primary'}
