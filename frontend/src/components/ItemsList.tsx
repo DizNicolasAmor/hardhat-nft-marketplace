@@ -9,12 +9,14 @@ const ItemsList: FC<IItemsList> = ({ items }) => (
   <div className="d-flex align-center">
     {items.map((item: IItem) => (
       <Item
-        key={item.tokenId}
         description={item.description}
         handleClick={item.handleClick}
         image={item.image}
+        key={item.tokenId}
         name={item.name}
+        owner={item.owner}
         price={item.price}
+        seller={item.seller}
         tokenId={item.tokenId}
       />
     ))}
