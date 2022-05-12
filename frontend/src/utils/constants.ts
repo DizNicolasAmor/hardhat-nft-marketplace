@@ -1,3 +1,5 @@
+import { ethers } from 'ethers';
+
 export const LOCALHOST_CHAIN_ID = 31337;
 
 export const CONTRACT_ADDRESSES: { [key: number]: string } = {
@@ -50,7 +52,7 @@ export const createHardcodedToken = async (
 ) => {
   const hardcodedURI =
     'https://bafybeiaw4vcge6hlgydocxqmlkfi5ihl6yt6jxhwa65zh5oednzrniq4t4.ipfs.infura-ipfs.io/';
-  const hardcodedPrice = '1';
+  const hardcodedPrice = ethers.utils.parseEther('1').toString();
   try {
     const tokenId = await createToken(hardcodedURI, hardcodedPrice);
     return tokenId;

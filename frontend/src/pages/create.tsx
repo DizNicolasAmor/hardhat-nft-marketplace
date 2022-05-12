@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { ethers } from 'ethers';
 import { create as ipfsHttpClient } from 'ipfs-http-client';
 import { Button, Container, Form, Image } from 'react-bootstrap';
 import CommonSpinner from '../components/CommonSpinner';
@@ -83,7 +84,8 @@ const CreateNFT = () => {
 
     try {
       const url = await uploadToIPFS(data);
-      const tokenId = await createToken(url, price);
+      const formattedPrice = ethers.utils.parseEther(price).toString();
+      const tokenId = await createToken(url, formattedPrice);
       setIsLoading(false);
       return tokenId;
     } catch (reason) {
@@ -97,8 +99,8 @@ const CreateNFT = () => {
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     event.preventDefault();
-    internalCreateNFT();
-    // createHardcodedToken(createToken);
+    // internalCreateNFT();
+    createHardcodedToken(createToken);
   };
 
   const renderContent = () => (
