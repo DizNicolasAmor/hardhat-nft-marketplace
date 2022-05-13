@@ -23,6 +23,10 @@ const NavbarCustom: FC = () => {
   };
 
   useEffect(() => {
+    handleConnect();
+  }, []);
+
+  useEffect(() => {
     if (typeof web3 === 'undefined') {
       resetFields();
     } else {
