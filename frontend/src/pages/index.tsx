@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Container } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import Error from '../components/Error';
@@ -40,17 +40,15 @@ const Home = () => {
     dispatch(setIsLoading(false));
   };
 
+  useEffect(() => {
+    if (!chainId) {
+      setErrorMessage('');
+    }
+    handleGetMarketItems();
+  }, [chainId]);
+
   const renderContent = () => (
     <>
-      <div className="m-3">
-        <Button
-          className="m-3"
-          variant="secondary"
-          onClick={handleGetMarketItems}
-        >
-          Get market items
-        </Button>
-      </div>
       {items.length ? (
         <ItemsList items={items} />
       ) : (
