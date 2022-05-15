@@ -6,7 +6,8 @@ import CommonSpinner from '../components/CommonSpinner';
 import { getNetwork } from '../redux/slices/networkSlice';
 import {
   getMarketplace,
-  setMarketplace,
+  setItemsOwned,
+  setItemsListed,
   setIsLoading,
 } from '../redux/slices/marketplaceSlice';
 import useMarketplace from '../hooks/useMarketplace';
@@ -16,8 +17,8 @@ import { IItem } from '../components/Item';
 const Profile = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const { chainId } = useSelector(getNetwork);
-  const { fetchMyNFTs } = useMarketplace(chainId);
-  const { isLoading, items } = useSelector(getMarketplace);
+  const { fetchMyNFTs, fetchItemsListed } = useMarketplace(chainId);
+  const { isLoading, itemsOwned, itemsListed } = useSelector(getMarketplace);
   const dispatch = useDispatch();
 
   const handleGetMarketItems = async () => {
@@ -25,14 +26,11 @@ const Profile = () => {
     dispatch(setIsLoading(true));
 
     try {
-      const marketItems: IItem[] = await fetchMyNFTs();
+      const itemsOwned: IItem[] = await fetchMyNFTs();
+      const itemsListed: IItem[] = await fetchItemsListed();
 
-      dispatch(
-        setMarketplace({
-          isLoading: false,
-          items: marketItems,
-        })
-      );
+      dispatch(setItemsOwned(itemsOwned));
+      dispatch(setItemsListed(itemsListed));
     } catch (reason) {
       console.error(reason);
       setErrorMessage('Error when fetching contract');
@@ -44,12 +42,27 @@ const Profile = () => {
     handleGetMarketItems();
   }, []);
 
+  useEffect(() => {
+    if (!chainId) {
+      setErrorMessage('');
+    }
+    handleGetMarketItems();
+  }, [chainId]);
+
   const renderContent = () => (
     <>
-      {items.length ? (
-        <ItemsList items={items} />
+      <h2>Items Owned</h2>
+      {itemsOwned.length ? (
+        <ItemsList items={itemsOwned} />
       ) : (
-        <div>You have no NFTs so far</div>
+        <div>There are no NFTs here</div>
+      )}
+      <hr className="w-50 text-center my-3 mx-auto" />
+      <h2>Items Listed</h2>
+      {itemsListed.length ? (
+        <ItemsList items={itemsListed} />
+      ) : (
+        <div>There are no NFTs here</div>
       )}
       <Error errorMessage={errorMessage} />
     </>

@@ -4,11 +4,15 @@ import { IItem } from '../../components/Item';
 interface IMarketplaceState {
   isLoading: boolean;
   items: IItem[];
+  itemsOwned: IItem[];
+  itemsListed: IItem[];
 }
 
 const initialState: IMarketplaceState = {
   isLoading: false,
   items: [],
+  itemsOwned: [],
+  itemsListed: [],
 };
 
 export const marketplaceSlice = createSlice({
@@ -18,6 +22,8 @@ export const marketplaceSlice = createSlice({
     resetMarketplace: (state: Draft<IMarketplaceState>) => {
       state.isLoading = false;
       state.items = [];
+      state.itemsOwned = [];
+      state.itemsListed = [];
     },
     setIsLoading: (
       state: Draft<IMarketplaceState>,
@@ -33,6 +39,20 @@ export const marketplaceSlice = createSlice({
       state.isLoading = action.payload.isLoading;
       state.items = [...action.payload.items];
     },
+    setItemsOwned: (
+      state: Draft<IMarketplaceState>,
+      action: PayloadAction<IItem[]>
+    ) => ({
+      ...state,
+      itemsOwned: action.payload,
+    }),
+    setItemsListed: (
+      state: Draft<IMarketplaceState>,
+      action: PayloadAction<IItem[]>
+    ) => ({
+      ...state,
+      itemsListed: action.payload,
+    }),
   },
 });
 
@@ -42,7 +62,12 @@ export const getMarketplace = (state: any): IMarketplaceState =>
   state.marketplace;
 
 // Reducers and actions
-export const { resetMarketplace, setIsLoading, setMarketplace } =
-  marketplaceSlice.actions;
+export const {
+  resetMarketplace,
+  setIsLoading,
+  setMarketplace,
+  setItemsOwned,
+  setItemsListed,
+} = marketplaceSlice.actions;
 
 export default marketplaceSlice.reducer;
