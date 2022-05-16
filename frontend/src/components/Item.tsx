@@ -41,7 +41,12 @@ const Item: FC<IItem> = ({
 
   return (
     <Card style={{ width: '18rem', margin: '1rem' }} id={tokenId} {...rest}>
-      <Card.Img variant="top" src={image} />
+      <div
+        className="d-flex align-items-center"
+        style={{ width: '285px', height: '285px', overflow: 'hidden' }}
+      >
+        <Card.Img variant="top" src={image} />
+      </div>
       <Card.Body>
         <Card.Title>{name}</Card.Title>
         <Card.Text>{description}</Card.Text>
