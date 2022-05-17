@@ -44,14 +44,19 @@ const mapChainIdToNetworkSymbol: { [id: number]: string } = {
 export const getNetworkSymbol = (chainId: number) =>
   mapChainIdToNetworkSymbol[chainId] || 'unknown';
 
-export const imageExampleURL =
-  'https://bafybeih2smrjpsymt5t7sx6pj27fvn3jhfjopye3wjjztrwkqq37nfixfy.ipfs.infura-ipfs.io/';
+export const dogsURI = {
+  PUG: 'https://ipfs.io/ipfs/QmSsYRx3LpDAb1GZQm7zZ1AuHZjfbPkD6J7s9r41xu1mf8?filename=pug.png',
+  SHIBA_INU:
+    'https://ipfs.io/ipfs/QmYx6GsYAKnNzZ9A6NvEKV9nf1VaDzJrqDR23Y8YSkebLU?filename=shiba-inu.png',
+  ST_BERNARD:
+    'https://ipfs.io/ipfs/QmUPjADFGEKmfohdTaNcWhp7VGk26h5jXDA7v3VtTnTLcW?filename=st-bernard.png',
+};
 
 export const createHardcodedToken = async (
   createToken: (url: string, price: string) => void
 ) => {
   const hardcodedURI =
-    'https://bafybeiaw4vcge6hlgydocxqmlkfi5ihl6yt6jxhwa65zh5oednzrniq4t4.ipfs.infura-ipfs.io/';
+    'https://ipfs.io/ipfs/bafybeig37ioir76s7mg5oobetncojcm3c3hxasyd4rvid4jqhy4gkaheg4/?filename=0-PUG.json';
   const hardcodedPrice = ethers.utils.parseEther('1').toString();
   try {
     const tokenId = await createToken(hardcodedURI, hardcodedPrice);
