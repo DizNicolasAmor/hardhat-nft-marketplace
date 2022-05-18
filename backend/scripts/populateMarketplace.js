@@ -4,7 +4,6 @@ const CONTRACT_ADDRESSES = {
 };
 const imageURI =
   "https://ipfs.io/ipfs/bafybeig37ioir76s7mg5oobetncojcm3c3hxasyd4rvid4jqhy4gkaheg4/?filename=0-PUG.json";
-const quantityOfNFTs = 3;
 
 async function populateMarketplace() {
   const contractAddress = CONTRACT_ADDRESSES[LOCALHOST_CHAIN_ID];
@@ -16,17 +15,12 @@ async function populateMarketplace() {
   const listingPrice = await nftMarketplace.getListingPrice();
   const value = listingPrice.toString();
 
-  const nfts = await Promise.all(
-    new Array(quantityOfNFTs).fill(imageURI).map(async (uri) => {
-      const nft = await nftMarketplace.createToken(uri, auctionPrice, {
-        value,
-      });
-      await nft.wait(1);
+  const nft = await nftMarketplace.createToken(imageURI, auctionPrice, {
+    value,
+  });
+  await nft.wait(1);
 
-      return nft;
-    })
-  );
-  console.log({ nfts });
+  console.log({ nft });
 }
 
 populateMarketplace()
