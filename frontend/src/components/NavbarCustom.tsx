@@ -2,7 +2,6 @@ import React, { FC, useEffect, useState } from 'react';
 import { providers, utils } from 'ethers';
 import { useSelector, useDispatch } from 'react-redux';
 import { Button, Container, Nav, Navbar } from 'react-bootstrap';
-import _truncate from 'lodash.truncate';
 import ToastCustom from './ToastCustom';
 import { getToast, setToast, resetToast } from '../redux/slices/toastSlice';
 import { getUser, resetUser, setUser } from '../redux/slices/userSlice';
@@ -39,6 +38,17 @@ const NavbarCustom: FC = () => {
       setIsToastOpen(true);
     }
   }, [toastMessage]);
+
+  useEffect(() => {
+    if (address) {
+      dispatch(
+        setToast({
+          message: `Your are connected with account: ${address}`,
+          type: 'primary',
+        })
+      );
+    }
+  }, [address]);
 
   const setNetworkAccount = async (web3: providers.Web3Provider) => {
     web3
@@ -82,15 +92,11 @@ const NavbarCustom: FC = () => {
     });
   };
 
-  const truncatedAddress = `${_truncate(address, {
-    length: 7,
-  })}${address.substring(address.length, address.length - 4)}`;
-
   return (
     <>
       <Navbar bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href="/">My ERC-20 dApp</Navbar.Brand>
+          <Navbar.Brand href="/">NFT Marketplace</Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
             <Nav
@@ -101,7 +107,6 @@ const NavbarCustom: FC = () => {
               <Nav.Link href="create">Create NFT</Nav.Link>
               <Nav.Link href="profile">Profile</Nav.Link>
             </Nav>
-            <div className="m-3">{truncatedAddress}</div>
             <Button
               onClick={handleConnect}
               variant={web3 ? 'outline-primary' : 'primary'}
