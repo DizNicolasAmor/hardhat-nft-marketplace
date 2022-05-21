@@ -30,6 +30,7 @@ const Item: FC<IItem> = ({
   const { address } = useSelector(getUser);
   const { symbol } = useSelector(getNetwork);
   const truncatedName = _truncate(name, { length: 15 });
+  const truncatedDescription = _truncate(description, { length: 60 });
 
   const isButtonDisabled = address === owner || address === seller;
   let buttonText;
@@ -58,7 +59,7 @@ const Item: FC<IItem> = ({
       </div>
       <Card.Body className="d-flex flex-column justify-content-between">
         <Card.Title>{truncatedName}</Card.Title>
-        <Card.Text>{description}</Card.Text>
+        <Card.Text>{truncatedDescription}</Card.Text>
         <Card.Text>
           {price} {symbol}
         </Card.Text>
