@@ -31,6 +31,8 @@ const Home = () => {
         setMarketplace({
           isLoading: false,
           items: marketItems,
+          itemsOwned: [],
+          itemsListed: [],
         })
       );
     } catch (reason) {
