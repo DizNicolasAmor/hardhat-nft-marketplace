@@ -39,14 +39,11 @@ const Profile = () => {
   };
 
   useEffect(() => {
-    handleGetMarketItems();
-  }, []);
-
-  useEffect(() => {
     if (!chainId) {
       setErrorMessage('');
+    } else {
+      handleGetMarketItems();
     }
-    handleGetMarketItems();
   }, [chainId]);
 
   const renderContent = () => (

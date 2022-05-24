@@ -45,8 +45,9 @@ const Home = () => {
   useEffect(() => {
     if (!chainId) {
       setErrorMessage('');
+    } else {
+      handleGetMarketItems();
     }
-    handleGetMarketItems();
   }, [chainId]);
 
   const renderContent = () => (
