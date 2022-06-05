@@ -66,6 +66,15 @@ $ npm run dev
 
 ## Known issues
 
+- MetaMask - configurate localhost network
+
+  ```
+  Network Name:     Localhost 8545
+  New RPC URL:      http://localhost:8545
+  Chain ID:         31337
+  Currency Symbol:  local ETH
+  ```
+
 - MetaMask - RPC Error
 
   ```
