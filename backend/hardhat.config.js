@@ -20,7 +20,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 module.exports = {
   networks: {
     kovan: {
-      url: `https://kovan.infura.io/v3/${process.env.WEB3_INFURA_PROJECT_ID_KOVAN}`,
+      url: `https://kovan.infura.io/v3/${process.env.WEB3_INFURA_PROJECT_ID}`,
       accounts: [`${process.env.PRIVATE_KEY}`],
     },
     localhost: {
