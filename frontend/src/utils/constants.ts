@@ -3,8 +3,8 @@ import { ethers } from 'ethers';
 export const LOCALHOST_CHAIN_ID = 31337;
 
 export const CONTRACT_ADDRESSES: { [key: number]: string } = {
-  42: '0x0bb711ee031e426b2eB9D1BfA0ef2936e8c5c40f',
-  [LOCALHOST_CHAIN_ID]: '0x5FbDB2315678afecb367f032d93F642f64180aa3',
+  42: process.env.NEXT_PUBLIC_KOVAN_CONTRACT || '',
+  [LOCALHOST_CHAIN_ID]: process.env.NEXT_PUBLIC_LOCALHOST_CONTRACT || '',
 };
 
 const mapChainIdToNetworkName: { [id: number]: string } = {
