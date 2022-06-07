@@ -20,6 +20,11 @@ Docs: https://nodejs.org/en/
 
 ## Setup
 
+### Set environment variables
+
+- In the backend directory, create an `.env` file. Copy the info from `.env.example` and replace the values with your environment variables.
+- In the frontend directory, create an `.env.local` file. Copy the info from `.env.local.example` and replace the values with your environment variables.
+
 ### Set up backend locally with Hardhat Network
 
 ```
