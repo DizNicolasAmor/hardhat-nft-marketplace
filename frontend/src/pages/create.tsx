@@ -99,8 +99,7 @@ const CreateNFT = () => {
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     event.preventDefault();
-    // internalCreateNFT();
-    createHardcodedToken(createToken);
+    internalCreateNFT();
   };
 
   const renderContent = () => (

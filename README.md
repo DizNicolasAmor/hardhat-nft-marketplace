@@ -4,7 +4,11 @@ This is a basic NFK Marketplace dApp built with Hardhat and React and Redux.
 
 **How it works**
 
-In the backend, <complete></complete>
+In the backend:
+
+- the user is able to create a NFT and publish it on the marketplace.
+- the user is able to but an NFT published on the marketplace.
+- the user is able to resell an NFT on the marketplace.
 
 In the frontend:
 
