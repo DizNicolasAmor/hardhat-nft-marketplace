@@ -24,6 +24,10 @@ Docs: https://nodejs.org/en/
 
 ## Setup
 
+### Quick setup
+
+I have already deployed a contract in Kovan Testnet, so you can only run the frontend side and then connect to Kovan blockchain.
+
 ### Set environment variables
 
 - In the backend directory, create an `.env` file. Copy the info from `.env.example` and replace the values with your environment variables.
